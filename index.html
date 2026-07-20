@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hindi Question Generator</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f4f7f6; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .container { background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); width: 90%; max-width: 600px; }
+        h1 { color: #2c3e50; text-align: center; }
+        textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; margin-bottom: 20px; box-sizing: border-box; }
+        button { background-color: #3498db; color: white; padding: 12px 20px; border: none; border-radius: 5px; cursor: pointer; width: 100%; font-size: 16px; }
+        button:hover { background-color: #2980b9; }
+        #result-container { margin-top: 25px; padding: 15px; background-color: #e8f4f8; border-left: 5px solid #3498db; display: none; }
+        .loading { text-align: center; display: none; margin-top: 15px; color: #7f8c8d; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Hindi Question Generator</h1>
+    <label>अपना हिंदी पैराग्राफ डालें:</label>
+    <textarea id="paragraph" rows="6"></textarea>
+    <button onclick="generateQuestion()">प्रश्न जनरेट करें</button>
+    <div class="loading" id="loading">मॉडल सोच रहा है... कृपया प्रतीक्षा करें...</div>
+    <div id="result-container">
+        <strong>प्रश्न:</strong>
+        <p id="generated-question"></p>
+    </div>
+</div>
+
+<script>
+    async function generateQuestion() {
+        const paragraph = document.getElementById('paragraph').value;
+        if (!paragraph.trim()) return alert('कृपया टेक्स्ट दर्ज करें।');
+
+        document.getElementById('result-container').style.display = 'none';
+        document.getElementById('loading').style.display = 'block';
+
+        try {
+            // YAHAN APNE RENDER.COM KA API LINK DAALNA HAI
+            // Example: "https://my-hindi-model.onrender.com/generate"
+            const backendUrl = "REPLACE_THIS_WITH_YOUR_BACKEND_URL/generate"; 
+            
+            const response = await fetch(backendUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ context: paragraph })
+            });
+            
+            const data = await response.json();
+            document.getElementById('generated-question').textContent = data.question || data.error;
+        } catch (error) {
+            document.getElementById('generated-question').textContent = "Error: Backend server se connect nahi ho paya.";
+        }
+        
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('result-container').style.display = 'block';
+    }
+</script>
+</body>
+</html>
